@@ -1,0 +1,12 @@
+/**
+ *	该文件是标记在AndroidManifest文件中需要添加的一些标签
+ */
+//======>>>>>>摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8689140======>>>>>>
+
+
+/**
+ *	表示需要用户授权允许创建系统提示窗口，也就是我们的桌面悬浮窗。
+ */
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+//<<<<<<======摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8689140<<<<<<======
