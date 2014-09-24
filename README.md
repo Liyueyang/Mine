@@ -1,4 +1,4 @@
 Mine
 ====
 
-my selected useful codes.
+my collected useful codes.
