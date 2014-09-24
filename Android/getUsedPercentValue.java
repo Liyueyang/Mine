@@ -1,5 +1,10 @@
 //======>>>>>>摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8689140======>>>>>>
 /**
+ * 用于获取手机可用内存
+ */
+private static ActivityManager mActivityManager;
+  
+/**
  * 计算已使用内存的百分比，并返回。
  * 
  * @param context
@@ -35,5 +40,19 @@ private static long getAvailableMemory(Context context) {
   ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
   getActivityManager(context).getMemoryInfo(mi);
   return mi.availMem;
+}
+
+/**
+ * 如果ActivityManager还未创建，则创建一个新的ActivityManager返回。否则返回当前已创建的ActivityManager。
+ * 
+ * @param context
+ *            可传入应用程序上下文。
+ * @return ActivityManager的实例，用于获取手机可用内存。
+ */
+private static ActivityManager getActivityManager(Context context) {
+  if (mActivityManager == null) {
+    mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+  }
+  return mActivityManager;
 }
 //<<<<<<======摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8689140<<<<<<======
