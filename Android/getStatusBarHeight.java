@@ -1,3 +1,4 @@
+//======>>>>>>摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8689140======>>>>>>
 /**
  * 用于获取状态栏的高度。
  * 
@@ -17,3 +18,4 @@ private int getStatusBarHeight() {
 	}
 	return statusBarHeight;
 }
+//<<<<<<======摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8689140<<<<<<======
