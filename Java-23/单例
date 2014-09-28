@@ -1,0 +1,22 @@
+//======>>>>>>摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8860649======>>>>>>
+
+private static LogUtil sLogUtil;
+
+public static LogUtil getInstance() {
+	if (sLogUtil == null) {
+		synchronized (LogUtil.class) {
+			if (sLogUtil == null) {
+				sLogUtil = new LogUtil();
+			}
+		}
+	}
+	return sLogUtil;
+}
+
+/**
+ *只有在sLogUtil还没被初始化的时候才会进入到第3行，然后加上同步锁。
+ *等sLogUtil一但初始化完成了，就再也走不到第3行了，
+ *这样执行getInstance方法也不会再受到同步锁的影响，效率上会有一定的提升。
+ */
+
+//<<<<<<======摘自郭霖CSDN博客：http://blog.csdn.net/guolin_blog/article/details/8860649<<<<<<======
