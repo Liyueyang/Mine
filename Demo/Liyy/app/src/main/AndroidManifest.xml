@@ -25,6 +25,10 @@
             android:name=".slidedelete.SlideDeleteDemo"
             android:label="@string/title_activity_slide_delete_demo" >
         </activity>
+        <activity
+            android:name=".slidetab.SlideTabActivity"
+            android:label="@string/title_activity_slide_tab" >
+        </activity>
     </application>
 
 </manifest>

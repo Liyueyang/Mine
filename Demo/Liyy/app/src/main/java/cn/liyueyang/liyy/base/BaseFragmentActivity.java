@@ -1,22 +1,23 @@
 package cn.liyueyang.liyy.base;
 
-import cn.liyueyang.liyy.util.SystemBarTintManager;
-
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import cn.liyueyang.liyy.util.SystemBarTintManager;
 
-public class BaseActivity extends Activity {
+/**
+ * Created by liyy on 2015/7/3.
+ */
+public class BaseFragmentActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             setTranslucentStatus(true);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
@@ -37,5 +38,4 @@ public class BaseActivity extends Activity {
         }
         win.setAttributes(winParams);
     }
-
 }

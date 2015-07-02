@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:fitsSystemWindows="true"
+             android:orientation="vertical">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:id="@+id/login_success_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#78000000"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip">
+
+        <RadioGroup
+            android:id="@+id/home_page_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp">
+
+            <RadioButton
+                android:id="@+id/home_follow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_top_normal"
+                android:button="@null"
+                android:gravity="center"
+                android:text="关注"
+                android:textColor="@color/select_home_radio_color"/>
+
+            <RadioButton
+                android:id="@+id/home_recommend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_recommend_select"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:text="推荐"
+                android:textColor="@color/select_home_radio_color"/>
+
+            <RadioButton
+                android:id="@+id/home_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_location_normal"
+                android:button="@null"
+                android:gravity="center"
+                android:text="位置"
+                android:textColor="@color/select_home_radio_color"/>
+        </RadioGroup>
+    </RelativeLayout>
+
+</FrameLayout>

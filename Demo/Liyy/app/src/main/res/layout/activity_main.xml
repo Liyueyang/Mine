@@ -25,6 +25,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="仿微信左滑删除"/>
+
+            <Button
+                android:id="@+id/slide_tab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="仿qq主界面的Tab"/>
         </LinearLayout>
     </ScrollView>
 
