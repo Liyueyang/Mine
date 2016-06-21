@@ -1,5 +1,6 @@
 package cn.lyy.findyou.activity;
 
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -69,7 +70,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void returnLocationResult(BDLocation location, String resultStr) {
         mResultTv.setText(resultStr);
         mLocationClient.stop();
+        String mtype = android.os.Build.MODEL; // 手机型号
+        String mtyb = android.os.Build.BRAND;//手机品牌
         AVObject result = new AVObject("Location");
+        result.put("MODEL", mtype);
+        result.put("BRAND", mtyb);
         result.put("location", resultStr);
         result.saveInBackground();
     }
