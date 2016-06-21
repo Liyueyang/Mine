@@ -1,35 +1,54 @@
 package cn.lyy.findyou.location;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.baidu.location.Poi;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
+
+import cn.lyy.findyou.core.Action;
 
 /**
  * Created by liyy on 06-20.
  */
-public class LocationListener implements BDLocationListener {
+public class LocationManager implements BDLocationListener {
 
-    private LocationCallBack mCallBack;
+    private LocationClient mLocationClient = null;
+    private WeakReference<Action.Two<BDLocation, String>> mRef;
+    private Context mContext;
 
-    public interface LocationCallBack{
-        void returnLocationResult(BDLocation location, String resultStr);
+    public LocationManager(Context context) {
+        mLocationClient = new LocationClient(context.getApplicationContext());
+        mLocationClient.registerLocationListener(this);
+        initLocation();
     }
 
-    public void setLocationCallBack(LocationCallBack callBack) {
-        mCallBack = callBack;
+    public void start(Action.Two<BDLocation, String> action) {
+        mRef = new WeakReference<>(action);
+        if (mLocationClient != null) {
+            mLocationClient.start();
+        }
+    }
+
+    public void stop() {
+        if (mLocationClient != null) {
+            mLocationClient.stop();
+        }
     }
 
     @Override
     public void onReceiveLocation(BDLocation location) {
         //Receive Location
-        StringBuffer sb = new StringBuffer(256);
-        sb.append("time : ");
-        sb.append(location.getTime());
-        sb.append("\nerror code : ");
+        StringBuffer sb;
+        sb = new StringBuffer(256);
+        sb.append("error code : ");
         sb.append(location.getLocType());
         sb.append("\nlatitude : ");
         sb.append(location.getLatitude());
@@ -76,18 +95,41 @@ public class LocationListener implements BDLocationListener {
         sb.append(location.getLocationDescribe());// 位置语义化信息
         List<Poi> list = location.getPoiList();// POI数据
         if (list != null) {
-            sb.append("\npoilist size = : ");
             sb.append(list.size());
             for (Poi p : list) {
                 sb.append("\npoi= : ");
-                sb.append(p.getId() + " " + p.getName() + " " + p.getRank());
+                sb.append(p.getName() + " " + p.getRank());
             }
         }
         Log.i("BaiduLocationApiDem", sb.toString());
-        if (mCallBack != null) {
-            mCallBack.returnLocationResult(location, sb.toString());
+        if (mRef == null) {
+            return;
         }
+        Action.Two<BDLocation, String> action = mRef.get();
+        if (action == null) {
+            return;
+        }
+        action.invoke(location, sb.toString());
+        mRef.clear();
+        mRef = null;
     }
 
+    private void initLocation() {
+        LocationClientOption option = new LocationClientOption();
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy
+        );//可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
+        option.setCoorType("bd09ll");//可选，默认gcj02，设置返回的定位结果坐标系
+        int span = 0;
+        option.setScanSpan(span);//可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
+        option.setIsNeedAddress(true);//可选，设置是否需要地址信息，默认不需要
+        option.setOpenGps(true);//可选，默认false,设置是否使用gps
+        option.setLocationNotify(true);//可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
+        option.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
+        option.setIsNeedLocationPoiList(true);//可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
+        option.setIgnoreKillProcess(false);//可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
+        option.SetIgnoreCacheException(false);//可选，默认false，设置是否收集CRASH信息，默认收集
+        option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤gps仿真结果，默认需要
+        mLocationClient.setLocOption(option);
+    }
 
 }

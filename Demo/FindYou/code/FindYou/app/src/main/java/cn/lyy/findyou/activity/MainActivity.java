@@ -1,25 +1,31 @@
 package cn.lyy.findyou.activity;
 
-import android.telephony.TelephonyManager;
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.avos.avoscloud.AVObject;
 import com.baidu.location.BDLocation;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
+
+import java.util.ArrayList;
 
 import cn.lyy.findyou.R;
-import cn.lyy.findyou.location.LocationListener;
+import cn.lyy.findyou.core.Action;
+import cn.lyy.findyou.location.LocationManager;
 import cn.lyy.findyou.utils.BaseActivity;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, LocationListener.LocationCallBack {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
+    private final int SDK_PERMISSION_REQUEST = 127;
     private TextView mResultTv;
     private Button mGetLocationBtn;
-    private LocationClient mLocationClient = null;
-    private LocationListener mLocationListener;
+    private LocationManager mLocationManager;
+    private String permissionInfo;
+    private Action.Two<BDLocation, String> mAction;
 
     @Override
     public int getContentViewId() {
@@ -29,11 +35,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void initData() {
         super.initData();
-        mLocationClient = new LocationClient(getApplicationContext());
-        mLocationListener = new LocationListener();
-        mLocationListener.setLocationCallBack(this);
-        mLocationClient.registerLocationListener(mLocationListener);
-        initLocation();
+        mLocationManager = new LocationManager(this);
+        getPersimmions();
     }
 
     @Override
@@ -62,44 +65,78 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void getLocation() {
         mResultTv.setText("Hello");
-        mLocationClient.start();
-    }
-
-
-    @Override
-    public void returnLocationResult(BDLocation location, String resultStr) {
-        mResultTv.setText(resultStr);
-        mLocationClient.stop();
-        String mtype = android.os.Build.MODEL; // 手机型号
-        String mtyb = android.os.Build.BRAND;//手机品牌
-        AVObject result = new AVObject("Location");
-        result.put("MODEL", mtype);
-        result.put("BRAND", mtyb);
-        result.put("location", resultStr);
-        result.saveInBackground();
-    }
-
-    private void initLocation() {
-        LocationClientOption option = new LocationClientOption();
-        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy
-        );//可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
-        option.setCoorType("bd09ll");//可选，默认gcj02，设置返回的定位结果坐标系
-        int span = 1000;
-        option.setScanSpan(span);//可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
-        option.setIsNeedAddress(true);//可选，设置是否需要地址信息，默认不需要
-        option.setOpenGps(true);//可选，默认false,设置是否使用gps
-        option.setLocationNotify(true);//可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
-        option.setIsNeedLocationDescribe(true);//可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-        option.setIsNeedLocationPoiList(true);//可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
-        option.setIgnoreKillProcess(false);//可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
-        option.SetIgnoreCacheException(false);//可选，默认false，设置是否收集CRASH信息，默认收集
-        option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤gps仿真结果，默认需要
-        mLocationClient.setLocOption(option);
+        mAction = new Action().new Two<BDLocation, String>() {
+            @Override
+            public void invoke(BDLocation arg1, String resultStr) {
+                mResultTv.setText(resultStr);
+                String mtype = android.os.Build.MODEL; // 手机型号
+                String mtyb = android.os.Build.BRAND;//手机品牌
+                AVObject result = new AVObject("Location");
+                result.put("MODEL", mtype);
+                result.put("BRAND", mtyb);
+                result.put("location", resultStr);
+                result.saveInBackground();
+            }
+        };
+        mLocationManager.start(mAction);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mLocationClient.stop();
+        mLocationManager.stop();
+    }
+
+    @TargetApi(23)
+    private void getPersimmions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ArrayList<String> permissions = new ArrayList<String>();
+            /***
+             * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
+             */
+            // 定位精确位置
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+            /*
+             * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
+			 */
+            // 读写权限
+            if (addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                permissionInfo += "Manifest.permission.WRITE_EXTERNAL_STORAGE Deny \n";
+            }
+            // 读取电话状态权限
+            if (addPermission(permissions, Manifest.permission.READ_PHONE_STATE)) {
+                permissionInfo += "Manifest.permission.READ_PHONE_STATE Deny \n";
+            }
+
+            if (permissions.size() > 0) {
+                requestPermissions(permissions.toArray(new String[permissions.size()]), SDK_PERMISSION_REQUEST);
+            }
+        }
+    }
+
+    @TargetApi(23)
+    private boolean addPermission(ArrayList<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
+            if (shouldShowRequestPermissionRationale(permission)) {
+                return true;
+            } else {
+                permissionsList.add(permission);
+                return false;
+            }
+
+        } else {
+            return true;
+        }
+    }
+
+    @TargetApi(23)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

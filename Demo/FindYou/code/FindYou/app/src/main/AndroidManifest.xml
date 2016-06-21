@@ -41,14 +41,12 @@
 
         <service
             android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote">
+            android:enabled="true">
         </service>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="6W2i5DLCk7TH11xEWoPO5GTG3Yi0yqvF"/>
-        //key:开发者申请的key
     </application>
 
 </manifest>
