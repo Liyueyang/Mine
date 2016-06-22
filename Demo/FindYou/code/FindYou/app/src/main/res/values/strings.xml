@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">FindYou</string>
+    <string name="baidu_location_app_key">6W2i5DLCk7TH11xEWoPO5GTG3Yi0yqvF</string>
     <string name="phone_info">Phone_info</string>
 </resources>
