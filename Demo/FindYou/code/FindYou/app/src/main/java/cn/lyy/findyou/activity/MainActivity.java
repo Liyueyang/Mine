@@ -2,41 +2,24 @@ package cn.lyy.findyou.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.avos.avoscloud.AVObject;
-
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import cn.lyy.findyou.R;
-import cn.lyy.findyou.location.LocationManager;
 import cn.lyy.findyou.service.LocationService;
 import cn.lyy.findyou.utils.BaseActivity;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private final int SDK_PERMISSION_REQUEST = 127;
-    private TextView mResultTv;
     private Button mGetLocationBtn;
     private Button mStartServiceBtn;
     private Button mStopServiceBtn;
-    private Button mBindServiceBtn;
-    private Button mUnBindServiceBtn;
-    private LocationManager mLocationManager;
-    private LocationHandler mLocationHandler;
-    private LocationService.DownloadBinder mDownloadBinder;
-    private ServiceConnection mConnection;
 
     @Override
     public int getContentViewId() {
@@ -46,33 +29,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void initData() {
         super.initData();
-        mLocationHandler = new LocationHandler(this);
-        mLocationManager = LocationManager.getInstance(this, mLocationHandler);
         getPersimmions();
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                mDownloadBinder = (LocationService.DownloadBinder) service;
-                mDownloadBinder.startDownload();
-                mDownloadBinder.getProgress();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
+//        startLocationService(); // TODO 暂时不设置启动界面获取位置信息
     }
 
     @Override
     public void findViewById() {
         super.findViewById();
-        mResultTv = (TextView) findViewById(R.id.result_tv);
         mGetLocationBtn = (Button) findViewById(R.id.button);
         mStartServiceBtn = (Button) findViewById(R.id.start_service_button);
         mStopServiceBtn = (Button) findViewById(R.id.stop_service_button);
-        mBindServiceBtn = (Button) findViewById(R.id.bind_service_button);
-        mUnBindServiceBtn = (Button) findViewById(R.id.unbind_service_button);
     }
 
     @Override
@@ -81,40 +47,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mGetLocationBtn.setOnClickListener(this);
         mStartServiceBtn.setOnClickListener(this);
         mStopServiceBtn.setOnClickListener(this);
-        mBindServiceBtn.setOnClickListener(this);
-        mUnBindServiceBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button:
-                getLocation();
-                break;
             case R.id.start_service_button:
                 startLocationService();
                 break;
             case R.id.stop_service_button:
                 stopLocationService();
                 break;
-            case R.id.bind_service_button:
-                bindLocationService();
-                break;
-            case R.id.unbind_service_button:
-                unBindLocationService();
-                break;
             default:
                 break;
         }
-    }
-
-    private void bindLocationService() {
-        Intent intent = new Intent(this, LocationService.class);
-        bindService(intent, mConnection, BIND_AUTO_CREATE);
-    }
-
-    private void unBindLocationService() {
-        unbindService(mConnection);
     }
 
     private void startLocationService() {
@@ -125,52 +71,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void stopLocationService() {
         Intent intent = new Intent(this, LocationService.class);
         stopService(intent);
-    }
-
-    private void getLocation() {
-        mResultTv.setText("Hello");
-        mLocationManager.start();
-    }
-
-    private static class LocationHandler extends Handler {
-
-        private WeakReference<MainActivity> mTarget;
-
-        public LocationHandler(MainActivity activity) {
-            mTarget = new WeakReference<MainActivity>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            MainActivity activity = mTarget.get();
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-
-            switch (msg.what) {
-                case 1:
-                    activity.mResultTv.setText((String)msg.obj);
-                    String mtype = android.os.Build.MODEL; // 手机型号
-                    String mtyb = android.os.Build.BRAND;//手机品牌
-                    AVObject result = new AVObject("Location");
-                    result.put("MODEL", mtype);
-                    result.put("BRAND", mtyb);
-                    result.put("location", (String)msg.obj);
-                    result.saveInBackground();
-                    break;
-                default:
-                    break;
-            }
-
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mLocationManager.stop();
     }
 
     @TargetApi(23)
