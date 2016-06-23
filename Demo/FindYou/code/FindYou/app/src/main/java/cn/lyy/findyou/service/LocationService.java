@@ -27,7 +27,7 @@ public class LocationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand executed");
 
-        new LocationManager(LocationService.this, new LocationHandler()).start();
+        LocationManager.getInstance(LocationService.this, new LocationHandler()).start();
         // TODO 添加定时器
         return super.onStartCommand(intent, flags, startId);
     }
