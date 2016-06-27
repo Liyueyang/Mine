@@ -17,7 +17,6 @@ import cn.lyy.findyou.utils.BaseActivity;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private final int SDK_PERMISSION_REQUEST = 127;
-    private Button mGetLocationBtn;
     private Button mStartServiceBtn;
     private Button mStopServiceBtn;
 
@@ -36,7 +35,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void findViewById() {
         super.findViewById();
-        mGetLocationBtn = (Button) findViewById(R.id.button);
         mStartServiceBtn = (Button) findViewById(R.id.start_service_button);
         mStopServiceBtn = (Button) findViewById(R.id.stop_service_button);
     }
@@ -44,7 +42,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void addListener() {
         super.addListener();
-        mGetLocationBtn.setOnClickListener(this);
         mStartServiceBtn.setOnClickListener(this);
         mStopServiceBtn.setOnClickListener(this);
     }
