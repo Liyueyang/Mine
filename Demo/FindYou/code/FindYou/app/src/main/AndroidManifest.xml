@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <!-- 这个权限用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -56,15 +57,13 @@
             android:value="@string/baidu_location_app_key"/>
 
         <service
-            android:name=".service.LocationService"
-            android:enabled="true"
-            android:exported="true"/>
+            android:name=".service.LocationService"/>
 
         <receiver
-            android:name=".receiver.StartLocationServiceReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":remote">
+            android:name=".receiver.StartLocationServiceReceiver">
+            <intent-filter android:priority="90000">
+                <action android:name="android.intent.action.USER_PRESENT"/>
+            </intent-filter>
         </receiver>
     </application>
 
