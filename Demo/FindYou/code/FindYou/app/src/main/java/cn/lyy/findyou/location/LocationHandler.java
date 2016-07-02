@@ -1,5 +1,6 @@
 package cn.lyy.findyou.location;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
@@ -10,7 +11,12 @@ import com.avos.avoscloud.AVObject;
  */
 public class LocationHandler extends Handler {
 
-    public LocationHandler() {
+    private Context mContext;
+    private String mActionType;
+
+    public LocationHandler(Context context, String actionType) {
+        mContext = context;
+        mActionType = actionType;
     }
 
     @Override
@@ -24,7 +30,8 @@ public class LocationHandler extends Handler {
                 AVObject result = new AVObject("Location");
                 result.put("MODEL", mtype);
                 result.put("BRAND", mtyb);
-                result.put("location", (String) msg.obj);
+                result.put("ActionType", mActionType);
+                result.put("Location", (String) msg.obj);
                 result.saveInBackground();
                 break;
             default:

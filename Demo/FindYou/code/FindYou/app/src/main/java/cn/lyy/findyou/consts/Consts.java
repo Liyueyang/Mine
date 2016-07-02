@@ -11,6 +11,11 @@ public class Consts {
     public static final String CUSTOM_BROADCAST_ACTION = "ACTION_FIND_YOU";
 
     /**
+     * start Service Extra Name
+     */
+    public static final String EXTRA_START_SERVICE_ACTION_NAME = "EXTRA_START_SERVICE_ACTION_NAME";
+
+    /**
      * 存储上次提醒时间SharedPreferences
      */
     public static final String SHARED_PREFERENCES_LAST_ALARM_TIME = "shared_preferences_last_alarm_time";

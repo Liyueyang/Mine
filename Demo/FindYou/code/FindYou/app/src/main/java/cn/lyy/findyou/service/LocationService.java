@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
 import cn.lyy.findyou.consts.Consts;
 import cn.lyy.findyou.location.LocationHandler;
@@ -21,6 +20,9 @@ public class LocationService extends Service {
     private static final String TAG = "LocationService";
     private SharedPreferences mPref;
     private SharedPreferences.Editor mPrefEditer;
+    private AlarmManager mAlarmManager;
+    private Intent mStartServiceIntent;
+    private PendingIntent mPi;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -36,11 +38,13 @@ public class LocationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         mPref = getSharedPreferences(Consts.SHARED_PREFERENCES_LAST_ALARM_TIME, MODE_PRIVATE);
         long lastAlarmTime = mPref.getLong(Consts.LAST_ALARM_TIME_KEY_SP, 0);
+        String actionType = "";
+        if (intent.hasExtra(Consts.EXTRA_START_SERVICE_ACTION_NAME)) {
+            actionType = intent.getStringExtra(Consts.EXTRA_START_SERVICE_ACTION_NAME);
+        }
         if (lastAlarmTime != 0) {
             long intervalTime = System.currentTimeMillis() - lastAlarmTime;
-            if (intervalTime < Consts.ALARM_INTERVAL_MILLIS) {
-                Log.e(TAG, "间隔小于30分钟");
-                Toast.makeText(LocationService.this, "间隔小于30分钟", Toast.LENGTH_SHORT).show();
+            if (actionType.equals(Intent.ACTION_USER_PRESENT) && intervalTime < Consts.ALARM_INTERVAL_MILLIS) {
                 return super.onStartCommand(intent, flags, startId);
             }
         }
@@ -49,18 +53,16 @@ public class LocationService extends Service {
         mPrefEditer.putLong(Consts.LAST_ALARM_TIME_KEY_SP, System.currentTimeMillis());
         mPrefEditer.commit();
 
-        LocationManager.getInstance(LocationService.this, new LocationHandler()).start();
-        Log.e(TAG, "提醒");
-        Toast.makeText(LocationService.this, "提醒", Toast.LENGTH_SHORT).show();
+        LocationManager.getInstance(LocationService.this, new LocationHandler(this, actionType)).start();
         // 添加定时器
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent startServiceIntent = new Intent(LocationService.this, StartLocationServiceReceiver.class);
-        startServiceIntent.setAction(Consts.CUSTOM_BROADCAST_ACTION);
-        PendingIntent pi = PendingIntent.getBroadcast(LocationService.this, 0, startServiceIntent, 0);
-        alarmManager.cancel(pi);
+        mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        mStartServiceIntent = new Intent(LocationService.this, StartLocationServiceReceiver.class);
+        mStartServiceIntent.setAction(Consts.CUSTOM_BROADCAST_ACTION);
+        mPi = PendingIntent.getBroadcast(LocationService.this, 0, mStartServiceIntent, 0);
+        mAlarmManager.cancel(mPi);
 
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 10 * 1000, Consts.ALARM_INTERVAL_MILLIS, pi);
+        mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + Consts.ALARM_INTERVAL_MILLIS, Consts.ALARM_INTERVAL_MILLIS, mPi);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -69,6 +71,7 @@ public class LocationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy()!");
+        mAlarmManager.cancel(mPi);
     }
 
 }
