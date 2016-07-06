@@ -49,13 +49,10 @@ public class LocationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         mPref = getSharedPreferences(Consts.SHARED_PREFERENCES_LAST_ALARM_TIME, MODE_PRIVATE);
         long lastAlarmTime = mPref.getLong(Consts.LAST_ALARM_TIME_KEY_SP, 0);
-        String actionType = "";
-        if (intent.hasExtra(Consts.EXTRA_START_SERVICE_ACTION_NAME)) {
-            actionType = intent.getStringExtra(Consts.EXTRA_START_SERVICE_ACTION_NAME);
-        }
+
         if (lastAlarmTime != 0) {
             long intervalTime = System.currentTimeMillis() - lastAlarmTime;
-            if (actionType.equals(Intent.ACTION_USER_PRESENT) && intervalTime < Consts.ALARM_INTERVAL_MILLIS) {
+            if (intervalTime < Consts.ALARM_INTERVAL_MILLIS) {
                 return START_REDELIVER_INTENT;
             }
         }
@@ -66,14 +63,14 @@ public class LocationService extends Service {
 
         LocationManager.getInstance(LocationService.this, mLocationHandler).start();
         // 添加定时器
-        mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        mStartServiceIntent = new Intent(LocationService.this, StartLocationServiceReceiver.class);
-        mStartServiceIntent.setAction(Consts.CUSTOM_BROADCAST_ACTION);
-        mPi = PendingIntent.getBroadcast(LocationService.this, 0, mStartServiceIntent, 0);
-        mAlarmManager.cancel(mPi);
-
-        mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + Consts.ALARM_INTERVAL_MILLIS, Consts.ALARM_INTERVAL_MILLIS, mPi);
+//        mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        mStartServiceIntent = new Intent(LocationService.this, StartLocationServiceReceiver.class);
+//        mStartServiceIntent.setAction(Consts.CUSTOM_BROADCAST_ACTION);
+//        mPi = PendingIntent.getBroadcast(LocationService.this, 0, mStartServiceIntent, 0);
+//        mAlarmManager.cancel(mPi);
+//
+//        mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
+//                SystemClock.elapsedRealtime() + Consts.ALARM_INTERVAL_MILLIS, Consts.ALARM_INTERVAL_MILLIS, mPi);
 
         return START_REDELIVER_INTENT;
     }
@@ -83,12 +80,13 @@ public class LocationService extends Service {
         super.onDestroy();
         unregisterReceiver(mReceiver);
         Log.e(TAG, "onDestroy()!");
-        mAlarmManager.cancel(mPi);
+        serviceDestroyed();
     }
 
-    private void serviceDestroied() {
+    private void serviceDestroyed() {
         AVObject serviceDestroyObj = new AVObject("ServiceDestroy");
-        serviceDestroyObj.put("location", "");
+        serviceDestroyObj.put("ServiceDestroy", "ServiceDestroy");
+        serviceDestroyObj.saveInBackground();
     }
 
     private static class LocationHandler extends Handler {
