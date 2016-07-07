@@ -59,12 +59,17 @@
         <service
             android:name=".service.LocationService"/>
 
+        <service
+            android:name="com.avos.avoscloud.PushService"
+            android:exported="true"/>
+
         <receiver
             android:name=".receiver.StartLocationServiceReceiver">
-            <intent-filter android:priority="90000">
-                <action android:name="android.intent.action.USER_PRESENT"/>
+            <intent-filter>
+                <action android:name="cn.lyy.findyou.action_find_you" />
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

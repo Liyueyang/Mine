@@ -1,7 +1,5 @@
 package cn.lyy.findyou.service;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +8,9 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.SystemClock;
-import android.util.Log;
 
 import com.avos.avoscloud.AVObject;
+import com.baidu.location.BDLocation;
 
 import cn.lyy.findyou.consts.Consts;
 import cn.lyy.findyou.location.LocationManager;
@@ -22,13 +19,10 @@ import cn.lyy.findyou.receiver.StartLocationServiceReceiver;
 public class LocationService extends Service {
 
     private static final String TAG = "LocationService";
-    private SharedPreferences mPref;
-    private SharedPreferences.Editor mPrefEditer;
-    private AlarmManager mAlarmManager;
-    private Intent mStartServiceIntent;
-    private PendingIntent mPi;
+
     private StartLocationServiceReceiver mReceiver;
     private LocationHandler mLocationHandler;
+    private String mInstallationId;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -38,7 +32,7 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mLocationHandler = new LocationHandler(this);
+        mLocationHandler = LocationHandler.getInstance(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_USER_PRESENT);
         mReceiver = new StartLocationServiceReceiver();
@@ -47,54 +41,57 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mPref = getSharedPreferences(Consts.SHARED_PREFERENCES_LAST_ALARM_TIME, MODE_PRIVATE);
-        long lastAlarmTime = mPref.getLong(Consts.LAST_ALARM_TIME_KEY_SP, 0);
+        SharedPreferences pref = getSharedPreferences(Consts.SHARED_PREFERENCES_LAST_ALARM_TIME, MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = pref.edit();
+        prefEditor.putLong(Consts.LAST_ALARM_TIME_KEY_SP, System.currentTimeMillis());
+        prefEditor.commit();
 
-        if (lastAlarmTime != 0) {
-            long intervalTime = System.currentTimeMillis() - lastAlarmTime;
-            if (intervalTime < Consts.ALARM_INTERVAL_MILLIS) {
-                return START_REDELIVER_INTENT;
-            }
-        }
-
-        mPrefEditer = mPref.edit();
-        mPrefEditer.putLong(Consts.LAST_ALARM_TIME_KEY_SP, System.currentTimeMillis());
-        mPrefEditer.commit();
-
+        SharedPreferences userPref = getSharedPreferences(Consts.SHARED_PREFERENCES_USER_INFO, MODE_PRIVATE);
+        mInstallationId = userPref.getString(Consts.USER_AVINSTALLATION_ID_PREF, "");
+        mLocationHandler.setInstallationId(mInstallationId);
+        mLocationHandler.setAction(intent.getAction());
         LocationManager.getInstance(LocationService.this, mLocationHandler).start();
-        // 添加定时器
-//        mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        mStartServiceIntent = new Intent(LocationService.this, StartLocationServiceReceiver.class);
-//        mStartServiceIntent.setAction(Consts.CUSTOM_BROADCAST_ACTION);
-//        mPi = PendingIntent.getBroadcast(LocationService.this, 0, mStartServiceIntent, 0);
-//        mAlarmManager.cancel(mPi);
-//
-//        mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-//                SystemClock.elapsedRealtime() + Consts.ALARM_INTERVAL_MILLIS, Consts.ALARM_INTERVAL_MILLIS, mPi);
-
         return START_REDELIVER_INTENT;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
-        Log.e(TAG, "onDestroy()!");
         serviceDestroyed();
     }
 
     private void serviceDestroyed() {
         AVObject serviceDestroyObj = new AVObject("ServiceDestroy");
-        serviceDestroyObj.put("ServiceDestroy", "ServiceDestroy");
+        serviceDestroyObj.put("InstallationId", mInstallationId);
         serviceDestroyObj.saveInBackground();
     }
 
     private static class LocationHandler extends Handler {
 
         private Context mContext;
+        private String mActionName = "";
+        private String mInstallationId = "";
+        private static volatile LocationHandler mInstance;
 
-        public LocationHandler(Context context) {
+        public static LocationHandler getInstance(Context context) {
+            if (mInstance == null) {
+                synchronized (LocationHandler.class) {
+                    mInstance = new LocationHandler(context);
+                }
+            }
+            return mInstance;
+        }
+
+        private LocationHandler(Context context) {
             mContext = context;
+        }
+
+        public void setInstallationId(String installationId) {
+            mInstallationId = installationId;
+        }
+
+        public void setAction(String actionName) {
+            mActionName = actionName;
         }
 
         @Override
@@ -103,12 +100,17 @@ public class LocationService extends Service {
 
             switch (msg.what) {
                 case 1:
+                    BDLocation bdLocation = (BDLocation) msg.obj;
+                    String latLonStr = bdLocation.getLatitude() + "," + bdLocation.getLongitude();
                     String mtype = android.os.Build.MODEL; // 手机型号
                     String mtyb = android.os.Build.BRAND;//手机品牌
                     AVObject result = new AVObject("Location");
                     result.put("MODEL", mtype);
                     result.put("BRAND", mtyb);
-                    result.put("Location", (String) msg.obj);
+                    result.put("Location", bdLocation.getAddrStr());
+                    result.put("Lat_Lon", latLonStr);
+                    result.put("InstallationId", mInstallationId);
+                    result.put("ActionName", mActionName);
                     result.saveInBackground();
                     break;
                 default:

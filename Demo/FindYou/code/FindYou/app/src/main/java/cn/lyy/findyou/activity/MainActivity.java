@@ -5,20 +5,22 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.view.View;
-import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 
 import cn.lyy.findyou.R;
 import cn.lyy.findyou.service.LocationService;
 import cn.lyy.findyou.utils.BaseActivity;
+import cn.lyy.findyou.utils.ServiceUtils;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
 
     private final int SDK_PERMISSION_REQUEST = 127;
-    private Button mStartServiceBtn;
-    private Button mStopServiceBtn;
+    private Switch mServiceSwitch;
+
+    private boolean mServiceIsWork = false;
 
     @Override
     public int getContentViewId() {
@@ -35,33 +37,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void findViewById() {
         super.findViewById();
-        mStartServiceBtn = (Button) findViewById(R.id.start_service_button);
-        mStopServiceBtn = (Button) findViewById(R.id.stop_service_button);
+        mServiceSwitch = (Switch) findViewById(R.id.service_switch);
+    }
+
+    @Override
+    public void refreshView() {
+        super.refreshView();
+        mServiceIsWork = ServiceUtils.isServiceWork(this, LocationService.class.getName());
+        mServiceSwitch.setChecked(mServiceIsWork);
     }
 
     @Override
     public void addListener() {
         super.addListener();
-        mStartServiceBtn.setOnClickListener(this);
-        mStopServiceBtn.setOnClickListener(this);
+        mServiceSwitch.setOnCheckedChangeListener(this);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.start_service_button:
-                startLocationService();
-                break;
-            case R.id.stop_service_button:
-                stopLocationService();
-                break;
-            default:
-                break;
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            startLocationService();
+        } else {
+            stopLocationService();
         }
     }
 
     private void startLocationService() {
         Intent intent = new Intent(this, LocationService.class);
+        intent.setAction("App start");
         startService(intent);
     }
 
@@ -118,4 +121,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
 }
