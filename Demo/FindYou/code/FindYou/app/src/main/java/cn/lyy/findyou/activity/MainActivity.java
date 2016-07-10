@@ -5,8 +5,11 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+
+import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
 
@@ -23,33 +26,28 @@ public class MainActivity extends BaseActivity implements CompoundButton.OnCheck
     private boolean mServiceIsWork = false;
 
     @Override
-    public int getContentViewId() {
-        return R.layout.activity_main;
-    }
-
-    @Override
-    public void initData() {
-        super.initData();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         getPersimmions();
-//        startLocationService(); // TODO 暂时不设置启动界面获取位置信息
-    }
+        setContentView(R.layout.activity_main);
 
-    @Override
-    public void findViewById() {
-        super.findViewById();
         mServiceSwitch = (Switch) findViewById(R.id.service_switch);
-    }
+        final PullToRefreshView mPullToRefreshView = (PullToRefreshView) findViewById(R.id.pull_to_refresh);
+        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPullToRefreshView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPullToRefreshView.setRefreshing(false);
+                    }
+                }, 2000);
+            }
+        });
 
-    @Override
-    public void refreshView() {
-        super.refreshView();
         mServiceIsWork = ServiceUtils.isServiceWork(this, LocationService.class.getName());
         mServiceSwitch.setChecked(mServiceIsWork);
-    }
 
-    @Override
-    public void addListener() {
-        super.addListener();
         mServiceSwitch.setOnCheckedChangeListener(this);
     }
 

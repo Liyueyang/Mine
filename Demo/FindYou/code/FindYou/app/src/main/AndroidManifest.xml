@@ -33,7 +33,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".splashscreen.SplashScreen"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance">
             <intent-filter>
@@ -41,6 +41,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:alwaysRetainTaskState="true"
+            android:screenOrientation="portrait">
         </activity>
 
         <service
@@ -66,7 +72,7 @@
         <receiver
             android:name=".receiver.StartLocationServiceReceiver">
             <intent-filter>
-                <action android:name="cn.lyy.findyou.action_find_you" />
+                <action android:name="cn.lyy.findyou.action_find_you"/>
             </intent-filter>
         </receiver>
 

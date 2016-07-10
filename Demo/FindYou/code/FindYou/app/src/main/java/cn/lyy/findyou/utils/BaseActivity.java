@@ -1,40 +1,39 @@
 package cn.lyy.findyou.utils;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
 
-public abstract class BaseActivity extends AppCompatActivity {
-
-    public abstract int getContentViewId();
-
-    public void initData() {
-    }
-
-    public void findViewById() {
-    }
-
-    public void refreshView() {
-    }
-
-    public void addListener() {
-    }
-
-    public void onResumeView() {
-    }
+public abstract class BaseActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getContentViewId());
-        initData();
-        findViewById();
-        refreshView();
-        addListener();
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        onResumeView();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
