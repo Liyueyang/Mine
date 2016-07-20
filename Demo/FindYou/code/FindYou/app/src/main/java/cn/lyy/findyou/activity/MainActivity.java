@@ -6,24 +6,29 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
+import com.baidu.location.BDLocation;
 import com.yalantis.phoenix.PullToRefreshView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import cn.lyy.findyou.R;
+import cn.lyy.findyou.location.LocationManager;
 import cn.lyy.findyou.service.LocationService;
 import cn.lyy.findyou.utils.BaseActivity;
 import cn.lyy.findyou.utils.ServiceUtils;
 
-public class MainActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends BaseActivity {
 
     private final int SDK_PERMISSION_REQUEST = 127;
-    private Switch mServiceSwitch;
-
-    private boolean mServiceIsWork = false;
+    private TextView mMyLocationTv;
+    private MyLocationHandler mMyLocationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,33 +36,22 @@ public class MainActivity extends BaseActivity implements CompoundButton.OnCheck
         getPersimmions();
         setContentView(R.layout.activity_main);
 
-        mServiceSwitch = (Switch) findViewById(R.id.service_switch);
-        final PullToRefreshView mPullToRefreshView = (PullToRefreshView) findViewById(R.id.pull_to_refresh);
-        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPullToRefreshView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPullToRefreshView.setRefreshing(false);
-                    }
-                }, 2000);
-            }
-        });
+        mMyLocationTv = (TextView) findViewById(R.id.my_location_text_view);
+//        final PullToRefreshView mPullToRefreshView = (PullToRefreshView) findViewById(R.id.pull_to_refresh);
+//        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mPullToRefreshView.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mPullToRefreshView.setRefreshing(false);
+//                    }
+//                }, 2000);
+//            }
+//        });
+        mMyLocationHandler = new MyLocationHandler(this);
+        LocationManager.getInstance(this, mMyLocationHandler).start();
 
-        mServiceIsWork = ServiceUtils.isServiceWork(this, LocationService.class.getName());
-        mServiceSwitch.setChecked(mServiceIsWork);
-
-        mServiceSwitch.setOnCheckedChangeListener(this);
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked) {
-            startLocationService();
-        } else {
-            stopLocationService();
-        }
     }
 
     private void startLocationService() {
@@ -66,9 +60,28 @@ public class MainActivity extends BaseActivity implements CompoundButton.OnCheck
         startService(intent);
     }
 
-    private void stopLocationService() {
-        Intent intent = new Intent(this, LocationService.class);
-        stopService(intent);
+    private static class MyLocationHandler extends Handler {
+
+        private WeakReference<BaseActivity> mTag;
+
+        public MyLocationHandler(BaseActivity activity) {
+            mTag = new WeakReference<BaseActivity>(activity);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case 1:
+                    MainActivity activity = (MainActivity) mTag.get();
+                    if (activity == null || activity.isFinishing()) {
+                        return;
+                    }
+                    BDLocation bdLocation = (BDLocation) msg.obj;
+                    activity.mMyLocationTv.setText(bdLocation.getAddrStr());
+                    break;
+            }
+        }
     }
 
     @TargetApi(23)

@@ -73,10 +73,17 @@ public class LocationService extends Service {
         private String mInstallationId = "";
         private static volatile LocationHandler mInstance;
 
+        /**
+         * 此处写单例是因为，启动app后，可能是收到推送开启的服务也可能是收到广播开启的服务，造成new出来的对象不统一
+         * @param context
+         * @return
+         */
         public static LocationHandler getInstance(Context context) {
             if (mInstance == null) {
                 synchronized (LocationHandler.class) {
-                    mInstance = new LocationHandler(context);
+                    if (mInstance == null) {
+                        mInstance = new LocationHandler(context);
+                    }
                 }
             }
             return mInstance;
