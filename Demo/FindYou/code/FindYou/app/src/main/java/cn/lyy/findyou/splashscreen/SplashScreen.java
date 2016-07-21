@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import cn.lyy.findyou.R;
 import cn.lyy.findyou.activity.MainActivity;
+import cn.lyy.findyou.login.ui.LoginActivity;
 import cn.lyy.findyou.service.LocationService;
 import cn.lyy.findyou.utils.BaseActivity;
 import cn.lyy.findyou.utils.ServiceUtils;
@@ -44,7 +45,7 @@ public class SplashScreen extends BaseActivity {
 
     private void startMainActivity() {
         Intent intent = new Intent();
-        intent.setClass(SplashScreen.this, MainActivity.class);
+        intent.setClass(SplashScreen.this, LoginActivity.class);
         SplashScreen.this.startActivity(intent);
         SplashScreen.this.finish();
     }

@@ -19,11 +19,11 @@ public class LocationManager implements BDLocationListener {
     private LocationClient mLocationClient = null;
     private Handler mHandler;
 
-    public static LocationManager getInstance(Context context, Handler handler) {
+    public static LocationManager getInstance(Context context) {
         if (mInstance == null) {
             synchronized (LocationManager.class) {
                 if (mInstance == null) {
-                    mInstance = new LocationManager(context.getApplicationContext(), handler);
+                    mInstance = new LocationManager(context.getApplicationContext());
                 }
             }
         }
@@ -31,11 +31,14 @@ public class LocationManager implements BDLocationListener {
         return mInstance;
     }
 
-    public LocationManager(Context context, Handler handler) {
+    public LocationManager(Context context) {
         mLocationClient = new LocationClient(context.getApplicationContext());
         mLocationClient.registerLocationListener(this);
-        mHandler = handler;
         initLocation();
+    }
+
+    public void setHandler(Handler handler) {
+        mHandler = handler;
     }
 
     public void start() {
@@ -107,7 +110,9 @@ public class LocationManager implements BDLocationListener {
 //        }
 //        Log.i("LocationManager", sb.toString());
         stop();
-        mHandler.obtainMessage(1, location).sendToTarget();
+        if (mHandler != null) {
+            mHandler.obtainMessage(1, location).sendToTarget();
+        }
     }
 
     private void initLocation() {

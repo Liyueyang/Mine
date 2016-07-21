@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="custom_navigation_view_style">
+        <attr name="custom_navigation_view_background" format="reference|color"/>
+        <attr name="custom_navigation_view_left_iv" format="reference"/>
+        <attr name="custom_navigation_view_left_btn_bg" format="reference"/>
+        <attr name="custom_navigation_view_left_btn_text" format="reference|string"/>
+        <attr name="custom_navigation_view_left_tv" format="reference|string"/>
+        <attr name="custom_navigation_view_center_tv" format="reference|string"/>
+        <attr name="custom_navigation_view_right_iv" format="reference"/>
+        <attr name="custom_navigation_view_right_btn_bg" format="reference"/>
+        <attr name="custom_navigation_view_right_btn_text" format="reference|string"/>
+        <attr name="custom_navigation_view_right_tv" format="reference|string"/>
+        <attr name="custom_navigation_view_type" format="string"/>
+        <attr name="custom_navigation_view_need_custom_background_color" format="string"/>
+        <attr name="custom_navigation_view_default_text_color" format="reference|color"/>
+    </declare-styleable>
+
+</resources>

@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <!-- 这个权限用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -49,6 +50,18 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity
+            android:name=".login.ui.LoginActivity"
+            android:alwaysRetainTaskState="true"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".login.ui.RegisterActivity"
+            android:alwaysRetainTaskState="true"
+            android:screenOrientation="portrait">
+        </activity>
+
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
@@ -73,6 +86,7 @@
             android:name=".receiver.StartLocationServiceReceiver">
             <intent-filter>
                 <action android:name="cn.lyy.findyou.action_find_you"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 

@@ -29,6 +29,7 @@ public class MainActivity extends BaseActivity {
     private final int SDK_PERMISSION_REQUEST = 127;
     private TextView mMyLocationTv;
     private MyLocationHandler mMyLocationHandler;
+    private LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +51,14 @@ public class MainActivity extends BaseActivity {
 //            }
 //        });
         mMyLocationHandler = new MyLocationHandler(this);
-        LocationManager.getInstance(this, mMyLocationHandler).start();
+        mLocationManager = LocationManager.getInstance(getApplicationContext());
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLocationManager.setHandler(mMyLocationHandler);
+        mLocationManager.start();
     }
 
     private void startLocationService() {

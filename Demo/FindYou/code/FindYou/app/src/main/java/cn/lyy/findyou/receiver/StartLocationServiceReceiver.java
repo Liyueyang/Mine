@@ -29,6 +29,8 @@ public class StartLocationServiceReceiver extends BroadcastReceiver {
             startServiceIntent.setAction(Intent.ACTION_USER_PRESENT);
         } else if (Consts.CUSTOM_BROADCAST_ACTION.equals(action)) {
             startServiceIntent.setAction(Consts.CUSTOM_BROADCAST_ACTION);
+        } else if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
+            startServiceIntent.setAction(Intent.ACTION_BOOT_COMPLETED);
         }
 
         startServiceIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);

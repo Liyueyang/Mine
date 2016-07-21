@@ -21,6 +21,7 @@ public class LocationService extends Service {
     private static final String TAG = "LocationService";
 
     private StartLocationServiceReceiver mReceiver;
+    private LocationManager mLocationManager;
     private LocationHandler mLocationHandler;
     private String mInstallationId;
 
@@ -37,6 +38,7 @@ public class LocationService extends Service {
         intentFilter.addAction(Intent.ACTION_USER_PRESENT);
         mReceiver = new StartLocationServiceReceiver();
         registerReceiver(mReceiver, intentFilter);
+        mLocationManager = LocationManager.getInstance(LocationService.this.getApplicationContext());
     }
 
     @Override
@@ -50,7 +52,9 @@ public class LocationService extends Service {
         mInstallationId = userPref.getString(Consts.USER_AVINSTALLATION_ID_PREF, "");
         mLocationHandler.setInstallationId(mInstallationId);
         mLocationHandler.setAction(intent.getAction());
-        LocationManager.getInstance(LocationService.this, mLocationHandler).start();
+
+        mLocationManager.setHandler(mLocationHandler);
+        mLocationManager.start();
         return START_REDELIVER_INTENT;
     }
 
