@@ -34,6 +34,7 @@ public class StartLocationServiceReceiver extends BroadcastReceiver {
         }
 
         startServiceIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        startServiceIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startService(startServiceIntent);
     }
 }

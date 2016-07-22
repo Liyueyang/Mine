@@ -113,11 +113,8 @@ public class LocationService extends Service {
                 case 1:
                     BDLocation bdLocation = (BDLocation) msg.obj;
                     String latLonStr = bdLocation.getLatitude() + "," + bdLocation.getLongitude();
-                    String mtype = android.os.Build.MODEL; // 手机型号
-                    String mtyb = android.os.Build.BRAND;//手机品牌
+
                     AVObject result = new AVObject("Location");
-                    result.put("MODEL", mtype);
-                    result.put("BRAND", mtyb);
                     result.put("Location", bdLocation.getAddrStr());
                     result.put("Lat_Lon", latLonStr);
                     result.put("InstallationId", mInstallationId);

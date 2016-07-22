@@ -2,12 +2,14 @@ package cn.lyy.findyou.login.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import cn.lyy.findyou.R;
+import cn.lyy.findyou.activity.MainActivity;
+import cn.lyy.findyou.core.Action;
+import cn.lyy.findyou.login.business.LoginBusiness;
 import cn.lyy.findyou.utils.BaseActivity;
 
 /**
@@ -19,6 +21,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private EditText mUserPasswordEt;
     private Button mLoginBtn;
     private Button mRegisterBtn;
+    private Action.One<Boolean> mLoginAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login_btn:
-
+                login();
                 break;
             case R.id.register_btn:
                 Intent intent = new Intent();
@@ -59,5 +62,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 LoginActivity.this.startActivity(intent);
                 break;
         }
+    }
+
+    private void login() {
+        mLoginAction = new Action(). new One<Boolean>() {
+            @Override
+            public void invoke(Boolean success) {
+                if (success) {
+                    Intent intent = new Intent();
+                    intent.setClass(LoginActivity.this, MainActivity.class);
+                    LoginActivity.this.startActivity(intent);
+                }
+            }
+        };
+        LoginBusiness.login(mUserNameEt.getText().toString().trim(), mUserPasswordEt.getText().toString().trim(), mLoginAction);
     }
 }

@@ -2,4 +2,15 @@
     <string name="app_name">FindYou</string>
     <string name="baidu_location_app_key">1BNafbso1KB4bWptnzVYmZLXd8KwR5dw</string>
     <string name="phone_info">Phone_info</string>
+
+    <string name="user_register_title_text">注册</string>
+    <string name="user_account_text">用户名</string>
+    <string name="user_nickname_text">昵称</string>
+    <string name="user_password_text">密码</string>
+    <string name="user_password_confirm_text">确认密码</string>
+    <string name="user_phone_text">电话</string>
+    <string name="user_info_commit_text">提交</string>
+    <string name="user_account_not_null">用户名不能为空</string>
+    <string name="user_password_not_same">两次密码输入不同</string>
+
 </resources>

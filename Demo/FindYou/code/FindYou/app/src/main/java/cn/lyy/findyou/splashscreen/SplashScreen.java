@@ -9,10 +9,9 @@ import android.widget.ImageView;
 
 import cn.lyy.findyou.R;
 import cn.lyy.findyou.activity.MainActivity;
+import cn.lyy.findyou.login.business.LoginBusiness;
 import cn.lyy.findyou.login.ui.LoginActivity;
-import cn.lyy.findyou.service.LocationService;
 import cn.lyy.findyou.utils.BaseActivity;
-import cn.lyy.findyou.utils.ServiceUtils;
 
 /**
  * Created by liyy on 07-09.
@@ -22,8 +21,10 @@ public class SplashScreen extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean mServiceIsWork = ServiceUtils.isServiceWork(this, LocationService.class.getName());
-        if (!mServiceIsWork) {
+
+        if (LoginBusiness.checkUserLoginState()) {
+            startMainActivity();
+        } else {
             setContentView(R.layout.activity_splash_screen);
             ImageView startIv = (ImageView) findViewById(R.id.start_imageview);
 
@@ -35,15 +36,21 @@ public class SplashScreen extends BaseActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startMainActivity();
+                    startLoginActivity();
                 }
             }, 1500);
-        } else {
-            startMainActivity();
+
         }
     }
 
     private void startMainActivity() {
+        Intent intent = new Intent();
+        intent.setClass(SplashScreen.this, MainActivity.class);
+        SplashScreen.this.startActivity(intent);
+        SplashScreen.this.finish();
+    }
+
+    private void startLoginActivity() {
         Intent intent = new Intent();
         intent.setClass(SplashScreen.this, LoginActivity.class);
         SplashScreen.this.startActivity(intent);

@@ -5,6 +5,7 @@ package cn.lyy.findyou.consts;
  * Created by liyy on 07-09.
  */
 public class UserConsts {
+    public static String USER_TABLE_NAME = "User";
     public static String USER_ACCOUNT = "userAccount";
     public static String USER_NAME = "userName";
     public static String USER_PASSWORD = "userPassword";

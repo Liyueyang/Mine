@@ -12,10 +12,12 @@
 
         <ImageView
             android:id="@+id/nav_left_iv"
-            android:layout_width="wrap_content"
+            android:layout_width="25dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
+            android:src="@mipmap/ic_arrow_left"
             android:scaleType="centerInside"/>
 
         <Button
@@ -54,11 +56,11 @@
 
         <ImageView
             android:id="@+id/nav_right_iv"
-            android:layout_width="wrap_content"
+            android:layout_width="25dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:paddingRight="10dp"
+            android:layout_marginRight="10dp"
             android:scaleType="centerInside"/>
 
         <Button

@@ -5,6 +5,7 @@ package cn.lyy.findyou.consts;
  * Created by liyy on 07-09.
  */
 public class LocationConsts {
+    public static String LOCATION_TABLE_NAME = "Location";
     public static String USER_ACCOUNT = UserConsts.USER_ACCOUNT;
     public static String ADDRESS = "address";
     public static String LONGITUDE = "longitude";
