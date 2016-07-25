@@ -8,12 +8,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
-import com.yalantis.phoenix.PullToRefreshView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -22,7 +19,6 @@ import cn.lyy.findyou.R;
 import cn.lyy.findyou.location.LocationManager;
 import cn.lyy.findyou.service.LocationService;
 import cn.lyy.findyou.utils.BaseActivity;
-import cn.lyy.findyou.utils.ServiceUtils;
 
 public class MainActivity extends BaseActivity {
 
@@ -74,6 +70,7 @@ public class MainActivity extends BaseActivity {
         public MyLocationHandler(BaseActivity activity) {
             mTag = new WeakReference<BaseActivity>(activity);
         }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);

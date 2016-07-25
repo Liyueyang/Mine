@@ -65,19 +65,19 @@ public class RegisterActivity extends BaseActivity implements CustomNavigationVi
 
         String userNickName = mEtUserNickName.getText().toString().trim();
         if (Utils.isNullOrEmpty(userNickName)) {
-            Toast.makeText(this, getString(R.string.user_account_not_null), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.user_nickname_not_null), Toast.LENGTH_SHORT).show();
             return false;
         }
         mUser.put(UserConsts.USER_NAME, userNickName);
 
         String userPassword = mEtUserPassword.getText().toString().trim();
         if (Utils.isNullOrEmpty(userPassword)) {
-            Toast.makeText(this, getString(R.string.user_account_not_null), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.user_password_not_null), Toast.LENGTH_SHORT).show();
             return false;
         }
         String userPasswordConfirm = mEtUserPasswordConfirm.getText().toString().trim();
         if (Utils.isNullOrEmpty(userPasswordConfirm)) {
-            Toast.makeText(this, getString(R.string.user_account_not_null), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.user_password_not_null), Toast.LENGTH_SHORT).show();
             return false;
         }
         if (!mEtUserPassword.getText().toString().trim().equals(mEtUserPasswordConfirm.getText().toString().trim())) {

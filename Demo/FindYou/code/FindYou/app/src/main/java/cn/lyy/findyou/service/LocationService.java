@@ -1,5 +1,6 @@
 package cn.lyy.findyou.service;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +56,7 @@ public class LocationService extends Service {
 
         mLocationManager.setHandler(mLocationHandler);
         mLocationManager.start();
+        startForeground(123, new Notification());
         return START_REDELIVER_INTENT;
     }
 

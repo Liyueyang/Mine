@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/top_nav"
         android:ems="16"
-        android:hint="@string/user_account_text"/>
+        android:hint="@string/user_register_account_text"/>
 
     <EditText
         android:id="@+id/et_user_nick_name"
@@ -28,7 +28,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/et_user_account"
         android:ems="10"
-        android:hint="@string/user_nickname_text"/>
+        android:hint="@string/user_register_nickname_text"/>
 
     <EditText
         android:id="@+id/et_user_password"
@@ -37,7 +37,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@id/et_user_nick_name"
         android:ems="10"
-        android:hint="@string/user_password_text"
+        android:hint="@string/user_register_password_text"
         android:inputType="textPassword"/>
 
     <EditText
@@ -47,7 +47,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@id/et_user_password"
         android:ems="10"
-        android:hint="@string/user_password_confirm_text"
+        android:hint="@string/user_register_password_confirm_text"
         android:inputType="textPassword"/>
 
     <EditText
@@ -57,7 +57,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@id/et_user_password_confirm"
         android:ems="10"
-        android:hint="@string/user_phone_text"
+        android:hint="@string/user_register_phone_text"
         android:inputType="phone"/>
 
 
