@@ -1,29 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/my_location_text_view"
-        android:layout_width="wrap_content"
+    <cn.lyy.findyou.widget.navigationview.CustomNavigationView
+        android:id="@+id/top_nav"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:textColor="@color/color_text_main_black"
-        android:textSize="@dimen/text_size_main_18dp"/>
+        android:layout_alignParentTop="true"
+        app:custom_navigation_view_center_tv="@string/app_name"
+        app:custom_navigation_view_right_iv="@mipmap/ic_more"
+        app:custom_navigation_view_type="9"/>
 
-    <com.yalantis.phoenix.PullToRefreshView
-        android:id="@+id/pull_to_refresh"
+    <LinearLayout
+        android:id="@+id/tabs"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <cn.lyy.findyou.widget.changecolortab.ChangeColorIconWithTextView
+            android:id="@+id/id_indicator_one"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:change_color_icon_view_icon="@mipmap/ic_like"
+            app:change_color_icon_view_text="aaa"
+            app:change_color_icon_view_text_size="12sp"/>
+
+        <cn.lyy.findyou.widget.changecolortab.ChangeColorIconWithTextView
+            android:id="@+id/id_indicator_two"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:change_color_icon_view_icon="@mipmap/ic_location"
+            app:change_color_icon_view_text="bbb"
+            app:change_color_icon_view_text_size="12sp"/>
+
+        <cn.lyy.findyou.widget.changecolortab.ChangeColorIconWithTextView
+            android:id="@+id/id_indicator_three"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            app:change_color_icon_view_icon="@mipmap/ic_me"
+            app:change_color_icon_view_text="ccc"
+            app:change_color_icon_view_text_size="12sp"/>
+
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/id_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_above="@id/tabs"
+        android:layout_below="@id/top_nav">
 
-        <ListView
-            android:id="@+id/list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@null"
-            android:dividerHeight="0dp"/>
-
-    </com.yalantis.phoenix.PullToRefreshView>
+    </android.support.v4.view.ViewPager>
 
 </RelativeLayout>

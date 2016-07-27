@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        app:custom_navigation_view_left_iv="@mipmap/ic_arrow_left"
         app:custom_navigation_view_right_iv="@mipmap/ic_tick_done"
         app:custom_navigation_view_center_tv="@string/user_register_title_text"
         app:custom_navigation_view_type="9"/>

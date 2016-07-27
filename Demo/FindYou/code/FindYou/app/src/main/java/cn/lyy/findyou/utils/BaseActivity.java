@@ -1,10 +1,10 @@
 package cn.lyy.findyou.utils;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,5 +35,10 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public boolean moveTaskToBack(boolean nonRoot) {
+        return super.moveTaskToBack(nonRoot);
     }
 }

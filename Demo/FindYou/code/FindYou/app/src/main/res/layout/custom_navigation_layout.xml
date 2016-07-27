@@ -15,9 +15,8 @@
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
-            android:src="@mipmap/ic_arrow_left"
+            android:layout_marginLeft="10dp"
             android:scaleType="centerInside"/>
 
         <Button

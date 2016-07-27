@@ -8,24 +8,43 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import cn.lyy.findyou.R;
 import cn.lyy.findyou.location.LocationManager;
 import cn.lyy.findyou.service.LocationService;
 import cn.lyy.findyou.utils.BaseActivity;
+import cn.lyy.findyou.widget.changecolortab.ChangeColorIconWithTextView;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements
+        ViewPager.OnPageChangeListener, View.OnClickListener {
 
     private final int SDK_PERMISSION_REQUEST = 127;
-    private TextView mMyLocationTv;
-    private MyLocationHandler mMyLocationHandler;
-    private LocationManager mLocationManager;
+
+    private ViewPager mViewPager;
+    private List<Fragment> mTabs = new ArrayList<Fragment>();
+    private FragmentPagerAdapter mAdapter;
+
+    private String[] mTitles = new String[]{"First Fragment!",
+            "Second Fragment!", "Third Fragment!"};
+
+    private List<ChangeColorIconWithTextView> mTabIndicator = new ArrayList<ChangeColorIconWithTextView>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,60 +52,151 @@ public class MainActivity extends BaseActivity {
         getPersimmions();
         setContentView(R.layout.activity_main);
 
-        mMyLocationTv = (TextView) findViewById(R.id.my_location_text_view);
-//        final PullToRefreshView mPullToRefreshView = (PullToRefreshView) findViewById(R.id.pull_to_refresh);
-//        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                mPullToRefreshView.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mPullToRefreshView.setRefreshing(false);
-//                    }
-//                }, 2000);
-//            }
-//        });
-        mMyLocationHandler = new MyLocationHandler(this);
-        mLocationManager = LocationManager.getInstance(getApplicationContext());
+//        setOverflowShowingAlways();
+//        getActionBar().setDisplayShowHomeEnabled(false);
+        mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
+
+        initDatas();
+
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.setOnPageChangeListener(this);
+
+    }
+
+    private void initDatas() {
+
+        for (String title : mTitles) {
+            TabFragment tabFragment = new TabFragment();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            tabFragment.setArguments(args);
+            mTabs.add(tabFragment);
+        }
+
+        mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+
+            @Override
+            public int getCount() {
+                return mTabs.size();
+            }
+
+            @Override
+            public Fragment getItem(int arg0) {
+                return mTabs.get(arg0);
+            }
+        };
+
+        initTabIndicator();
+
+    }
+
+    private void initTabIndicator() {
+        ChangeColorIconWithTextView one = (ChangeColorIconWithTextView) findViewById(R.id.id_indicator_one);
+        ChangeColorIconWithTextView two = (ChangeColorIconWithTextView) findViewById(R.id.id_indicator_two);
+        ChangeColorIconWithTextView three = (ChangeColorIconWithTextView) findViewById(R.id.id_indicator_three);
+
+        mTabIndicator.add(one);
+        mTabIndicator.add(two);
+        mTabIndicator.add(three);
+
+        one.setOnClickListener(this);
+        two.setOnClickListener(this);
+        three.setOnClickListener(this);
+
+        one.setIconAlpha(1.0f);
+    }
+
+    //    @Override
+//    public boolean onCreateOptionsMenu(Menu menu)
+//    {
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
+
+    @Override
+    public void onPageSelected(int arg0) {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mLocationManager.setHandler(mMyLocationHandler);
-        mLocationManager.start();
-    }
+    public void onPageScrolled(int position, float positionOffset,
+                               int positionOffsetPixels) {
+        // Log.e("TAG", "position = " + position + " , positionOffset = "
+        // + positionOffset);
 
-    private void startLocationService() {
-        Intent intent = new Intent(this, LocationService.class);
-        intent.setAction("App start");
-        startService(intent);
-    }
+        if (positionOffset > 0) {
+            ChangeColorIconWithTextView left = mTabIndicator.get(position);
+            ChangeColorIconWithTextView right = mTabIndicator.get(position + 1);
 
-    private static class MyLocationHandler extends Handler {
-
-        private WeakReference<BaseActivity> mTag;
-
-        public MyLocationHandler(BaseActivity activity) {
-            mTag = new WeakReference<BaseActivity>(activity);
+            left.setIconAlpha(1 - positionOffset);
+            right.setIconAlpha(positionOffset);
         }
 
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+    }
 
-            switch (msg.what) {
-                case 1:
-                    MainActivity activity = (MainActivity) mTag.get();
-                    if (activity == null || activity.isFinishing()) {
-                        return;
-                    }
-                    BDLocation bdLocation = (BDLocation) msg.obj;
-                    activity.mMyLocationTv.setText(bdLocation.getAddrStr());
-                    break;
-            }
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        resetOtherTabs();
+
+        switch (v.getId()) {
+            case R.id.id_indicator_one:
+                mTabIndicator.get(0).setIconAlpha(1.0f);
+                mViewPager.setCurrentItem(0, false);
+                break;
+            case R.id.id_indicator_two:
+                mTabIndicator.get(1).setIconAlpha(1.0f);
+                mViewPager.setCurrentItem(1, false);
+                break;
+            case R.id.id_indicator_three:
+                mTabIndicator.get(2).setIconAlpha(1.0f);
+                mViewPager.setCurrentItem(2, false);
+                break;
+        }
+
+    }
+
+    /**
+     * 重置其他的Tab
+     */
+    private void resetOtherTabs() {
+        for (int i = 0; i < mTabIndicator.size(); i++) {
+            mTabIndicator.get(i).setIconAlpha(0);
         }
     }
+
+//    @Override
+//    public boolean onMenuOpened(int featureId, Menu menu) {
+//        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+//            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+//                try {
+//                    Method m = menu.getClass().getDeclaredMethod(
+//                            "setOptionalIconsVisible", Boolean.TYPE);
+//                    m.setAccessible(true);
+//                    m.invoke(menu, true);
+//                } catch (Exception e) {
+//                }
+//            }
+//        }
+//        return super.onMenuOpened(featureId, menu);
+//    }
+
+//    private void setOverflowShowingAlways() {
+//        try {
+//            // true if a permanent menu key is present, false otherwise.
+//            ViewConfiguration config = ViewConfiguration.get(this);
+//            Field menuKeyField = ViewConfiguration.class
+//                    .getDeclaredField("sHasPermanentMenuKey");
+//            menuKeyField.setAccessible(true);
+//            menuKeyField.setBoolean(config, false);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @TargetApi(23)
     private void getPersimmions() {
@@ -135,6 +245,11 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public boolean moveTaskToBack(boolean nonRoot) {
+        return true;
     }
 
 }

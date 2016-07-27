@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ChangeColorIconView">
+        <attr name="change_color_icon_view_icon" format="reference"/>
+        <attr name="change_color_icon_view_color" format="color"/>
+        <attr name="change_color_icon_view_text" format="string"/>
+        <attr name="change_color_icon_view_text_size" format="dimension"/>
+    </declare-styleable>
+</resources>
