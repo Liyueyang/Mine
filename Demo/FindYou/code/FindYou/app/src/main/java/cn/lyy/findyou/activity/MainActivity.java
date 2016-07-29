@@ -52,8 +52,6 @@ public class MainActivity extends BaseActivity implements
         getPersimmions();
         setContentView(R.layout.activity_main);
 
-//        setOverflowShowingAlways();
-//        getActionBar().setDisplayShowHomeEnabled(false);
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
 
         initDatas();
@@ -106,13 +104,6 @@ public class MainActivity extends BaseActivity implements
         one.setIconAlpha(1.0f);
     }
 
-    //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu)
-//    {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-
     @Override
     public void onPageSelected(int arg0) {
     }
@@ -120,9 +111,6 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onPageScrolled(int position, float positionOffset,
                                int positionOffsetPixels) {
-        // Log.e("TAG", "position = " + position + " , positionOffset = "
-        // + positionOffset);
-
         if (positionOffset > 0) {
             ChangeColorIconWithTextView left = mTabIndicator.get(position);
             ChangeColorIconWithTextView right = mTabIndicator.get(position + 1);
@@ -168,35 +156,6 @@ public class MainActivity extends BaseActivity implements
             mTabIndicator.get(i).setIconAlpha(0);
         }
     }
-
-//    @Override
-//    public boolean onMenuOpened(int featureId, Menu menu) {
-//        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
-//            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
-//                try {
-//                    Method m = menu.getClass().getDeclaredMethod(
-//                            "setOptionalIconsVisible", Boolean.TYPE);
-//                    m.setAccessible(true);
-//                    m.invoke(menu, true);
-//                } catch (Exception e) {
-//                }
-//            }
-//        }
-//        return super.onMenuOpened(featureId, menu);
-//    }
-
-//    private void setOverflowShowingAlways() {
-//        try {
-//            // true if a permanent menu key is present, false otherwise.
-//            ViewConfiguration config = ViewConfiguration.get(this);
-//            Field menuKeyField = ViewConfiguration.class
-//                    .getDeclaredField("sHasPermanentMenuKey");
-//            menuKeyField.setAccessible(true);
-//            menuKeyField.setBoolean(config, false);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     @TargetApi(23)
     private void getPersimmions() {

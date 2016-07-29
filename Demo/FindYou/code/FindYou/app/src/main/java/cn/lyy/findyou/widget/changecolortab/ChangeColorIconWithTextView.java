@@ -95,6 +95,7 @@ public class ChangeColorIconWithTextView extends View {
         a.recycle();
 
         mTextPaint = new Paint();
+        mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setColor(0xff555555);
         // 得到text绘制范围
@@ -109,11 +110,12 @@ public class ChangeColorIconWithTextView extends View {
                 - getPaddingRight(), getMeasuredHeight() - getPaddingTop()
                 - getPaddingBottom() - mTextBound.height());
 
+        bitmapWidth = Math.min(bitmapWidth, mIconBitmap.getWidth());
         int left = getMeasuredWidth() / 2 - bitmapWidth / 2;
-        int top = (getMeasuredHeight() - mTextBound.height()) / 2 - bitmapWidth
+        int top = (getMeasuredHeight() - mTextBound.height()) / 2 - mIconBitmap.getHeight()
                 / 2;
         // 设置icon的绘制范围
-        mIconRect = new Rect(left, top, left + bitmapWidth, top + bitmapWidth);
+        mIconRect = new Rect(left, top, left + bitmapWidth, top + mIconBitmap.getHeight());
     }
 
     @Override
@@ -147,7 +149,7 @@ public class ChangeColorIconWithTextView extends View {
         mTextPaint.setAlpha(255 - alpha);
         canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
                         - mTextBound.width() / 2,
-                mIconRect.bottom + mTextBound.height(), mTextPaint);
+                mIconRect.bottom + mTextBound.height() + 5, mTextPaint);
     }
 
     private void drawTargetText(Canvas canvas, int alpha) {
@@ -155,8 +157,7 @@ public class ChangeColorIconWithTextView extends View {
         mTextPaint.setAlpha(alpha);
         canvas.drawText(mText, mIconRect.left + mIconRect.width() / 2
                         - mTextBound.width() / 2,
-                mIconRect.bottom + mTextBound.height(), mTextPaint);
-
+                mIconRect.bottom + mTextBound.height() + 5, mTextPaint);
     }
 
     public void setIconAlpha(float alpha) {

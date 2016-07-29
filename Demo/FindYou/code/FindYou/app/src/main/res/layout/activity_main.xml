@@ -17,7 +17,7 @@
     <LinearLayout
         android:id="@+id/tabs"
         android:layout_width="fill_parent"
-        android:layout_height="60dp"
+        android:layout_height="55dp"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
         android:orientation="horizontal">
@@ -29,8 +29,8 @@
             android:layout_weight="1"
             android:padding="5dp"
             app:change_color_icon_view_icon="@mipmap/ic_like"
-            app:change_color_icon_view_text="aaa"
-            app:change_color_icon_view_text_size="12sp"/>
+            app:change_color_icon_view_text="关注的人"
+            app:change_color_icon_view_text_size="@dimen/text_size_14dp"/>
 
         <cn.lyy.findyou.widget.changecolortab.ChangeColorIconWithTextView
             android:id="@+id/id_indicator_two"
@@ -39,8 +39,8 @@
             android:layout_weight="1"
             android:padding="5dp"
             app:change_color_icon_view_icon="@mipmap/ic_location"
-            app:change_color_icon_view_text="bbb"
-            app:change_color_icon_view_text_size="12sp"/>
+            app:change_color_icon_view_text="我的位置"
+            app:change_color_icon_view_text_size="@dimen/text_size_14dp"/>
 
         <cn.lyy.findyou.widget.changecolortab.ChangeColorIconWithTextView
             android:id="@+id/id_indicator_three"
@@ -49,8 +49,8 @@
             android:layout_weight="1"
             android:padding="5dp"
             app:change_color_icon_view_icon="@mipmap/ic_me"
-            app:change_color_icon_view_text="ccc"
-            app:change_color_icon_view_text_size="12sp"/>
+            app:change_color_icon_view_text="设置"
+            app:change_color_icon_view_text_size="@dimen/text_size_14dp"/>
 
     </LinearLayout>
 
