@@ -1,0 +1,54 @@
+重写JNI_OnLoad（）方法这样就会当调用 System.loadLibrary(“XXXX”)方法的时候直接来调用JNI_OnLoad()
+这样就达到了动态注册实现native方法的作用。
+
+/*
+* System.loadLibrary("lib")时调用
+* 如果成功返回JNI版本, 失败返回-1
+*/
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
+    JNIEnv* env = NULL;
+    jint result = -1;
+    if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+        return -1;
+    }
+    assert(env != NULL);
+    if (!registerNatives(env)) {//注册
+        return -1;
+    }
+    //成功
+    result = JNI_VERSION_1_4;
+    return result;
+}
+
+/*
+* 为所有类注册本地方法
+*/
+static int registerNatives(JNIEnv* env) {
+    return registerNativeMethods(env, JNIREG_CLASS, gMethods,sizeof(gMethods) / sizeof(gMethods[0]));
+}
+
+static JNINativeMethod gMethods[] = {    
+    {"setDataSource",       "(Ljava/lang/String;)V",            (void *)com_media_ffmpeg_FFMpegPlayer_setDataSource},    
+    {"_setVideoSurface",    "(Landroid/view/Surface;)V",        (void *)com_media_ffmpeg_FFMpegPlayer_setVideoSurface}, 
+}
+
+//===========================
+主要是第二个参数比较复杂：
+
+括号里面表示参数的类型，括号后面表示返回值。
+
+“()” 中的字符表示参数，后面的则代表返回值。例如”()V” 就表示void * Fun();
+“(II)V” 表示 void Fun(int a, int b);
+“(II)I” 表示 int sum(int a, int b);
+这些字符与函数的参数类型的映射表如下： 
+字符 Java类型 C类型 
+V void void 
+Z jboolean boolean 
+I jint int 
+J jlong long 
+D jdouble double 
+F jfloat float 
+B jbyte byte 
+C jchar char 
+S jshort short
+//=============================
