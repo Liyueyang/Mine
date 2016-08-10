@@ -3,3 +3,13 @@ GsonFormat---------------------------
 https://github.com/zzz40500/GsonFormat
 
 Android WiFi ADB---------------------
+
+ECTranslation------------------------
+可以对AndroidStudio中的英文进行翻译的插件
+下载地址： https://github.com/Skykai521/ECTranslation
+-------------------------------------
+
+GsonFormat--------------------------
+根据JSONObject格式的字符串,自动生成实体类
+下载地址： https://github.com/zzz40500/GsonFormat
+
